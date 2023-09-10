@@ -1,0 +1,1 @@
+javaScript Objects scopes closueres
