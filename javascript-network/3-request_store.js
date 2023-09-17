@@ -1,4 +1,3 @@
-#!usr/bin/node
 const request = require('request');
 const fs = require('fs');
 
@@ -20,12 +19,6 @@ request.get(url, (error, response, body) => {
     console.error(`Request failed with status code ${response.statusCode}`);
   } else {
     // Write the response body to the file with UTF-8 encoding
-    fs.writeFile(filePath, body, { encoding: 'utf-8' }, (writeError) => {
-      if (writeError) {
-        console.error(`Error writing to file: ${writeError.message}`);
-      } else {
-        console.log(`Contents of ${url} have been saved to ${filePath}`);
-      }
-    });
+    fs.writeFile(filePath, body, { encoding: 'utf-8' }, (writeError) => {});
   }
 });
