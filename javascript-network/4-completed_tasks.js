@@ -1,34 +1,19 @@
-const request = require('request');
+const request = require("request");
 
-// Define the API URL
-const apiUrl = 'https://jsonplaceholder.typicode.com/todos';
+const url = process.argv[2];
 
-// Send a GET request to the API
-request(apiUrl, (error, response, body) => {
-  if (error) {
-    console.error(`Error: ${error.message}`);
-  } else if (response.statusCode !== 200) {
-    console.error(`Request failed with status code ${response.statusCode}`);
-  } else {
-    try {
-      const todos = JSON.parse(body);
+request.get(url,(error,res,body)=>{
+    const data = JSON.parse(res.body);
 
-      // Filter and count completed tasks by user id
-      const completedTasksByUser = {};
+    let complted_by_user={};
 
-      todos.forEach((todo) => {
-        if (todo.completed) {
-          const userId = todo.userId;
-          completedTasksByUser[userId] = (completedTasksByUser[userId] || 0) + 1;
+    data.forEach(e => {
+        if(e.completed){
+            const nb_completed_tasks=data.filter(t=>t.userId==e.userId && t.completed==true)
+            complted_by_user[e.userId]=nb_completed_tasks.length;
         }
-      });
+    });
 
-      // Print users with completed task count
-      for (const userId in completedTasksByUser) {
-        console.log(`User ID ${userId}: ${completedTasksByUser[userId]} completed tasks`);
-      }
-    } catch (parseError) {
-      console.error(`Error parsing API response: ${parseError.message}`);
-    }
-  }
-});
+    console.log(complted_by_user)
+
+})
