@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Advanced Shopping Cart</title>
+</head>
+<body>
+    <h2>Available products:</h2>
+    <ul id="item-list"></ul>
+    <div id="cart-container">
+        <h2>Your cart:</h2>
+        <div id="cart"></div>
+    </div>
+    <script>
+        // Check if session storage is available
+        function isSessionStorageSupported() {
+            try {
+                sessionStorage.setItem('test', 'test');
+                sessionStorage.removeItem('test');
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // Array of available items
+        const availableItems = ['Shampoo', 'Soap', 'Sponge', 'Water'];
+
+        // Function to get the cart from session storage
+        function getCartFromStorage() {
+            const cartJSON = sessionStorage.getItem('cart');
+            return cartJSON ? JSON.parse(cartJSON) : {};
+        }
+
+        // Function to add an item to the cart
+        function addItemToCart(item) {
+            const cart = getCartFromStorage();
+            
+            if (cart[item]) {
+                cart[item]++;
+            } else {
+                cart[item] = 1;
+            }
+
+            sessionStorage.setItem('cart', JSON.stringify(cart));
+            displayCart();
+        }
+
+        // Function to remove an item from the cart
+        function removeItemFromCart(item) {
+            const cart = getCartFromStorage();
+            
+            if (cart[item]) {
+                delete cart[item];
+                sessionStorage.setItem('cart', JSON.stringify(cart));
+                displayCart();
+            }
+        }
+
+        // Function to clear the entire cart
+        function clearCart() {
+            sessionStorage.removeItem('cart');
+            displayCart();
+        }
+
+        // Function to create the item list
+        function createStore() {
+            const itemList = document.getElementById('item-list');
+
+            // Loop through the array of items and create list items
+            availableItems.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                li.addEventListener('click', () => addItemToCart(item));
+                itemList.appendChild(li);
+            });
+        }
+
+        // Function to display the cart
+        function displayCart() {
+            const cartContainer = document.getElementById('cart');
+            cartContainer.innerHTML = '';
+
+            const cart = getCartFromStorage();
+            const cartKeys = Object.keys(cart);
+
+            const clearButton = document.createElement('span');
+            clearButton.textContent = 'Clear my cart';
+            clearButton.addEventListener('click', clearCart);
+
+            if (cartKeys.length === 0) {
+                const emptyCartText = document.createElement('p');
+                emptyCartText.textContent = 'Your cart is empty.';
+                cartContainer.appendChild(emptyCartText);
+            } else {
+                cartKeys.forEach(item => {
+                    const cartItem = document.createElement('p');
+                    cartItem.textContent = `${item} x ${cart[item]} `;
+                    
+                    const removeButton = document.createElement('button');
+                    removeButton.textContent = 'remove';
+                    removeButton.addEventListener('click', () => removeItemFromCart(item));
+                    
+                    cartItem.appendChild(removeButton);
+                    cartContainer.appendChild(cartItem);
+                });
+            }
+            
+            cartContainer.insertBefore(clearButton, cartContainer.firstChild);
+        }
+
+        // Check for session storage support and initialize the application
+        if (isSessionStorageSupported()) {
+            createStore();
+            displayCart();
+        } else {
+            alert('Sorry, your browser does not support Web storage. Try again with a better one.');
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shopping Cart</title>
+</head>
+<body>
+    <h1>Available Items</h1>
+    <ul id="item-list"></ul>
+    <p id="cart-message"></p>
+    <script>
+         // Array of available items
+        const availableItems = ['Shampoo', 'Soap', 'Sponge', 'Water'];
+
+        // Function to add an item to the cart in session storage
+        function addItemToCart(item) {
+            sessionStorage.setItem(item, 'true');
+            displayCart();
+        }
+
+        // Function to create the item list
+        function createStore() {
+            const itemList = document.getElementById('item-list');
+
+            // Loop through the array of items and create list items
+            availableItems.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                li.addEventListener('click', () => addItemToCart(item));
+                itemList.appendChild(li);
+            });
+        }
+
+        // Function to display cart contents
+        function displayCart() {
+            const cartMessage = document.getElementById('cart-message');
+            const cartItems = Object.keys(sessionStorage);
+
+            if (cartItems.length === 0) {
+                cartMessage.textContent = '';
+            } else {
+                cartMessage.textContent = `You previously had ${cartItems.length} item(s) in your cart.`;
+            }
+        }
+
+        // Initialize the application
+        createStore();
+        displayCart();
+
+    </script>
+</body>
+</html>
